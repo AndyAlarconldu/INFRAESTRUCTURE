@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Frontend Simple</title>
+</head>
+<body>
+  <h1>Frontend</h1>
+  <button onclick="getMessage()">Obtener mensaje del backend</button>
+  <p id="respuesta"></p>
+
+  <script>
+    async function getMessage() {
+      try {
+        const res = await fetch("http://localhost:5000/");
+        const data = await res.json();
+        document.getElementById("respuesta").textContent = data.message;
+      } catch (error) {
+        document.getElementById("respuesta").textContent = "Error al conectar con el backend";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
