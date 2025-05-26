@@ -1,12 +1,25 @@
-from flask import Flask, jsonify
-from flask_cors import CORS
+from flask import Flask, render_template, jsonify
+import requests
 
 app = Flask(__name__)
-CORS(app)  # Permitir llamadas desde el frontend
 
 @app.route('/')
 def home():
-    return jsonify({"message": "Hola desde el backend Flask!"})
+    return render_template('index.html')
+
+@app.route('/api/countries')
+def get_countries():
+    response = requests.get('https://restcountries.com/v3.1/all')
+    if response.status_code == 200:
+        data = response.json()
+        # Procesamos solo nombre, capital y región
+        countries = [{
+            'name': c.get('name', {}).get('common'),
+            'capital': c.get('capital', ['N/A'])[0],
+            'region': c.get('region')
+        } for c in data]
+        return jsonify(countries)
+    return jsonify({'error': 'No se pudo obtener los países'}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0')
